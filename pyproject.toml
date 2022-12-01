@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "productmanagement"
+version = "0.1.0"
+description = ""
+authors = ["anjups"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.88.0"
+uvicorn = {extras = ["standard"], version = "^0.20.0"}
+alembic = "^1.8.1"
+psycopg2 = "^2.9.5"
+sqlalchemy = "^1.4.44"
+pytest = "^7.2.0"
+httpx = "^0.23.1"
+pre-commit = "^2.20.0"
+
+
+[tool.poetry.group.D.dependencies]
+black = "^22.10.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
