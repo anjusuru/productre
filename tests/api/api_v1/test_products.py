@@ -1,6 +1,8 @@
 import json
 import pytest
 from app.core.config import settings
+import httpx
+from pytest_httpx import HTTPXMock
 
 
 def test_create_product(client) -> None:
@@ -12,30 +14,18 @@ def test_create_product(client) -> None:
         "quantity": 0,
         "category": "category",
     }
-
-    # test_response_payload = {
-    #     "product": {
-    #         "price": 0,
-    #         "id": 1,
-    #         "category": "category",
-    #         "quantity": 0,
-    #         "name": "new",
-    #         "brand": "brand",
-    #     }
-    # }
     response = client.post(
         f"{settings.API_V1_STR}/",
-        data=json.dumps(test_request_payload),
+        content=json.dumps(test_request_payload),
     )
-    content = response.json()
-    # print(content)
+
     assert response.status_code == 201
-    assert content["message"] == "Product Created"
+    assert response.json()["message"] == "Product Created"
 
 
 def test_create_product_invalid_json(client):
     response = client.post(
-        f"{settings.API_V1_STR}/", data=json.dumps({"name": "something"})
+        f"{settings.API_V1_STR}/", content=json.dumps({"name": "something"})
     )
     assert response.status_code == 422
 
@@ -62,12 +52,12 @@ def test_update_product(client):
     }
     client.post(
         f"{settings.API_V1_STR}/",
-        data=json.dumps(data),
+        content=json.dumps(data),
     )
     data["name"] = "test new title"
     response = client.put(
         f"{settings.API_V1_STR}/2",
-        data=json.dumps(data),
+        content=json.dumps(data),
     )
     assert response.status_code == 200
 
@@ -82,7 +72,7 @@ def test_deleteproduct(client):  # new
     }
     client.post(
         f"{settings.API_V1_STR}/",
-        data=json.dumps(data),
+        content=json.dumps(data),
     )
     msg = client.delete(f"{settings.API_V1_STR}/3")
     response = client.get(f"{settings.API_V1_STR}/3")
