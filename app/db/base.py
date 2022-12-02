@@ -1,2 +1,2 @@
 from app.models import Order, Product
-from .session import Base
+from .session import Base, engine

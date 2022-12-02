@@ -7,7 +7,7 @@ def test_create_product(client) -> None:
 
     test_request_payload = {
         "name": "new",
-        "brand": "brandtest15",
+        "brand": "abc1",
         "price": 0,
         "quantity": 0,
         "category": "category",
@@ -55,7 +55,7 @@ def test_read_all_notes(client):
 def test_update_product(client):
     data = {
         "name": "new",
-        "brand": "brandtest16",
+        "brand": "asda",
         "price": 0,
         "quantity": 0,
         "category": "category",
@@ -66,7 +66,7 @@ def test_update_product(client):
     )
     data["name"] = "test new title"
     response = client.put(
-        f"{settings.API_V1_STR}/29",
+        f"{settings.API_V1_STR}/2",
         data=json.dumps(data),
     )
     assert response.status_code == 200
@@ -75,7 +75,7 @@ def test_update_product(client):
 def test_deleteproduct(client):  # new
     data = {
         "name": "new",
-        "brand": "brandtest17",
+        "brand": "ghi2",
         "price": 0,
         "quantity": 0,
         "category": "category",
@@ -84,6 +84,6 @@ def test_deleteproduct(client):  # new
         f"{settings.API_V1_STR}/",
         data=json.dumps(data),
     )
-    msg = client.delete(f"{settings.API_V1_STR}/30")
-    response = client.get(f"{settings.API_V1_STR}/30")
+    msg = client.delete(f"{settings.API_V1_STR}/3")
+    response = client.get(f"{settings.API_V1_STR}/3")
     assert response.status_code == 404
