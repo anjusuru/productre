@@ -36,7 +36,7 @@ SessionTesting = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 @pytest.fixture(scope="session")
-def app_test() -> Generator[FastAPI, Any, None]:
+def test_app() -> Generator[FastAPI, Any, None]:
     """
     Create a fresh database on each test case.
     """
@@ -47,7 +47,7 @@ def app_test() -> Generator[FastAPI, Any, None]:
 
 
 @pytest.fixture(name="session")
-def session_fixture(app_test: FastAPI) -> Generator[SessionTesting, Any, None]:
+def session_fixture(test_app: FastAPI) -> Generator[SessionTesting, Any, None]:
     connection = engine.connect()
     transaction = connection.begin()
     session = SessionTesting(bind=connection)
@@ -58,15 +58,15 @@ def session_fixture(app_test: FastAPI) -> Generator[SessionTesting, Any, None]:
 
 
 @pytest.fixture(autouse=True)  #
-def client(
-    app_test: FastAPI, session: SessionTesting
+def test_client(
+    test_app: FastAPI, session: SessionTesting
 ) -> Generator[TestClient, Any, None]:  #
     def get_db_override():  #
         return session
 
-    app_test.dependency_overrides[get_db] = get_db_override  #
+    test_app.dependency_overrides[get_db] = get_db_override  #
 
-    client = TestClient(app)  #
+    client = TestClient(test_app)  #
     yield client  #
 
-    app_test.dependency_overrides.clear()  #
+    test_app.dependency_overrides.clear()  #

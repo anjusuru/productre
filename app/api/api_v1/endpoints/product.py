@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import Any, List
+from pytest_mock import mocker
 
 from app import schemas, models, crud
 
@@ -15,6 +16,7 @@ router = APIRouter()
 def create_product(
     product: schemas.CreateProduct, db: Session = Depends(session.get_db)
 ) -> JSONResponse:
+
     product_in = schemas.CreateProduct(**product.dict())
     product_in_db = crud.product_obj.create(db, product_in)
     status_code = status.HTTP_201_CREATED
@@ -58,16 +60,18 @@ def get_products(
 def update_product(
     id: int, product_in: schemas.UpdateProduct, db: Session = Depends(session.get_db)
 ) -> JSONResponse:
-
+    # try:
     product_db = crud.product_obj.get(db=db, id=id)
     # product_in = schemas.UpdateProduct(**product.dict())
     status_code = status.HTTP_404_NOT_FOUND
     resp_data = {
-        "product_id": product_db.id,
+        "product_id": id,
         "message": "Product not found",
     }
     if not product_db:
         return JSONResponse(status_code=status_code, content=resp_data)
+    # except:
+    #     raise HTTPException(status_code,resp_data)
     product = crud.product_obj.update(db=db, db_obj=product_db, obj_in=product_in)
     return product
 
@@ -79,15 +83,18 @@ def delete_item(
     id: int,
 ) -> Any:
 
-    # product_indb = crud.product_obj.get(db=db, id=id)
-    product = crud.product_obj.delete(db=db, id=id)
+    product_indb = crud.product_obj.get(db=db, id=id)
+    # product = crud.product_obj.delete(db=db, id=id)
     status_code = status.HTTP_404_NOT_FOUND
     resp_data = {
         "product_id": id,
         "message": "Product not found",
     }
-    if not product:
-        return JSONResponse(status_code=status_code, content=resp_data)
 
-    # product = crud.product_obj.delete(db=db, id=id)
+    if not product_indb:
+        return JSONResponse(status_code=status_code, content=resp_data)
+    # except Exception as e:
+    #     raise HTTPException(status_code,resp_data)
+
+    product = crud.product_obj.delete(db=db, id=id)
     return product

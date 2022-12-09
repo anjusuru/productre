@@ -22,8 +22,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    def get(self, db: Session, id: Any) -> Optional[ModelType]:
-        return db.query(self.model).filter(self.model.id == id).first()
+    def get(self, db: Session, id: Any) -> Optional[ModelType] | None:
+        product_db = db.query(self.model).filter(self.model.id == id).first()
+        if product_db:
+            return product_db
+        else:
+            return None
 
     def get_many(
         self,
@@ -108,8 +112,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 else return None
         """
         obj = self.get(db, id)
-        if not obj:
-            return None
+
         db.delete(obj)
         db.commit()
         return obj
